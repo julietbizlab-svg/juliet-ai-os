@@ -10,7 +10,9 @@ function updateClock(){
 function recommend(text){
  const t=(text||"").trim(); if(!t) return "請先輸入任務。";
  const rules=[
-  [["會議紀錄","會議記錄","會議","紀錄","記錄","範本","模板","表單"],"ChatGPT → Google Docs → Google Drive","先產生可直接套用的文字範本，再存成文件與雲端檔案。"],
+  [["之前的資料","之前資料","過去資料","舊資料","歷史資料","歷史紀錄","調閱","查找","找資料","找之前"],"Google Drive → NotebookLM → ChatGPT → Google Docs","先從既有雲端資料與知識庫找舊紀錄，再交給 ChatGPT 整理成可用文件。"],
+  [["會議紀錄範本","會議記錄範本","會議範本","會議模板","紀錄範本","記錄範本","表單"],"ChatGPT → Google Docs → Google Drive","先產生可直接套用的文字範本，再存成文件與雲端檔案。"],
+  [["會議紀錄","會議記錄","會議","紀錄","記錄"],"Google Docs → ChatGPT → Google Drive","先建立或整理會議文件，再用 ChatGPT 協助摘要決議與待辦。"],
   [["盆景","補助","公文","核銷","研習"],"Perplexity → ChatGPT → Claude → Google Drive","先查最新補助，再寫計畫與整理附件。"],
   [["高手","課表","預約","瑜伽","有氧","LINE"],"ChatGPT → Canva → LINE OA","先產生課表與文案，再做圖發布。"],
   [["穿搭","造型","妝","髮型","包包","鞋"],"ChatGPT → Canva → Ideogram / Recraft","先判斷風格，再做視覺資料庫。"],
