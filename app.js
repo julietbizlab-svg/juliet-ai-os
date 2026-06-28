@@ -76,14 +76,10 @@ function classify(text){
 function boot(){
  updateClock(); setInterval(updateClock,1000);
  const rb=document.querySelector("#recommendBtn");
- if(rb) rb.addEventListener("click",()=>{const box=document.querySelector("#recommendResult"); box.innerHTML=recommend(document.querySelector("#taskInput").value); box.classList.remove("hidden"); openFirstRecommendedTool(box);});
+ if(rb) rb.addEventListener("click",()=>{const box=document.querySelector("#recommendResult"); box.innerHTML=recommend(document.querySelector("#taskInput").value); box.classList.remove("hidden");});
  document.querySelectorAll("[data-task]").forEach(btn=>btn.addEventListener("click",()=>{document.querySelector("#taskInput").value=btn.dataset.task; if(rb) rb.click();}));
  const cb=document.querySelector("#classifyBtn");
  if(cb) cb.addEventListener("click",()=>{const box=document.querySelector("#classifyResult"); box.innerHTML=classify(document.querySelector("#inboxText").value); box.classList.remove("hidden");});
-}
-function openFirstRecommendedTool(box){
- const link=box.querySelector(".tool-links a");
- if(link) window.open(link.href,"_blank","noopener");
 }
 document.addEventListener("DOMContentLoaded",()=>{
  boot();
