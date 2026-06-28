@@ -1,0 +1,9 @@
+{
+  "name": "JULIET AI OS Ultimate",
+  "short_name": "JULIET AI OS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050914",
+  "theme_color": "#8a4fff",
+  "icons": []
+}

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JULIET AI OS｜AI 安全中心</title><link rel="manifest" href="./manifest.json"/><link rel="stylesheet" href="./style.css"/></head>
+<body><div class="layout"><aside class="side"><div class="brand"><div class="mark">✦</div><div><h1>JULIET AI OS</h1><p>Ultimate｜量身訂作版</p></div></div><nav class="nav"><a class="" href="./index.html">總覽首頁</a><a class="" href="./advisor.html">AI 推薦引擎</a><a class="" href="./inbox.html">AI 自動收件匣</a><a class="" href="./archive.html">AI 自動歸檔</a><a class="" href="./knowledge.html">AI 知識庫</a><a class="" href="./workflows.html">AI 工作流程</a><a class="" href="./tools.html">50+ AI 官方入口</a><a class="" href="./bonsai.html">高樹鄉盆景協會</a><a class="" href="./gosu.html">高手揪派</a><a class="" href="./style.html">穿搭形象設計</a><a class="" href="./travel.html">旅遊規劃</a><a class="" href="./life.html">個人生活</a><a class="" href="./ai-learning.html">AI 學習</a><a class="" href="./marketing.html">行銷文案中心</a><a class="" href="./design.html">設計中心</a><a class="" href="./video.html">影音中心</a><a class="" href="./music.html">音樂配音中心</a><a class="" href="./search.html">搜尋研究中心</a><a class="" href="./documents.html">文件中心</a><a class="" href="./slides.html">簡報中心</a><a class="" href="./automation.html">自動化中心</a><a class="" href="./github.html">GitHub 部署中心</a><a class="" href="./notion.html">Notion 管理中心</a><a class="" href="./drive.html">Google Drive 倉庫</a><a class="" href="./lineoa.html">LINE OA 中心</a><a class="" href="./calendar.html">行事曆中心</a><a class="" href="./finance.html">費用與免費額度</a><a class="" href="./prompts.html">提示詞庫</a><a class="" href="./checklists.html">檢查清單</a><a class="" href="./templates.html">模板中心</a><a class="" href="./reports.html">成效報告</a><a class="" href="./contacts.html">人脈與單位</a><a class="" href="./gallery.html">靈感圖庫</a><a class="" href="./tasks.html">任務看板</a><a class="" href="./mobile.html">手機版設定</a><a class="" href="./settings.html">系統設定</a><a class="active" href="./security.html">AI 安全中心</a><a class="" href="./backup.html">備份與安全</a><a class="" href="./roadmap.html">升級路線圖</a><a class="" href="./help.html">使用說明</a><a class="" href="./about.html">關於本系統</a></nav></aside>
+<main>
+<section class="hero">
+  <div>
+    <p class="tag">Security Gate</p>
+    <h2>AI 安全中心</h2>
+    <p class="muted">任何下載檔、壓縮檔、PDF、Word、Excel、圖片、網址，先經過這個窗口判斷風險，再決定是否開啟或歸檔。</p>
+  </div>
+  <div class="clock"><span id="dateText"></span><strong id="timeText"></strong></div>
+</section>
+
+<section class="grid topgrid">
+  <article class="card">
+    <h3>檔案風險判斷器</h3>
+    <p class="muted">貼上檔名、網址或檔案來源描述，先做初步風險分類。這不是防毒引擎，只是幫妳判斷是否該掃描、隔離或刪除。</p>
+    <textarea id="securityInput" placeholder="例如：invoice.zip、補助申請表.xlsm、陌生人寄來的 PDF、bit.ly 短網址..."></textarea>
+    <button id="securityBtn">檢查風險</button>
+    <div id="securityResult" class="result hidden"></div>
+  </article>
+
+  <article class="card">
+    <h3>建議免費工具</h3>
+    <div class="tiles" style="grid-template-columns:1fr">
+      <div class="tile"><h4>VirusTotal</h4><p>檢查檔案雜湊、網址、網域是否曾被回報惡意。</p><a href="https://www.virustotal.com" target="_blank">開啟</a></div>
+      <div class="tile"><h4>Jotti Malware Scan</h4><p>多引擎掃描小型檔案。</p><a href="https://virusscan.jotti.org" target="_blank">開啟</a></div>
+      <div class="tile"><h4>Google Safe Browsing</h4><p>檢查網址是否被 Google 標記為危險網站。</p><a href="https://transparencyreport.google.com/safe-browsing/search" target="_blank">開啟</a></div>
+      <div class="tile"><h4>Microsoft Defender</h4><p>Windows 內建防毒。Mac 使用者可改用內建 XProtect + Gatekeeper。</p></div>
+    </div>
+  </article>
+</section>
+
+<section class="section">
+  <div class="section-head"><h3>檔案進入倉庫前 SOP</h3><p class="muted">先安全，再歸檔。</p></div>
+  <div class="flow">
+    <div>1<br>確認來源</div>
+    <div>2<br>檢查副檔名</div>
+    <div>3<br>掃描檔案/網址</div>
+    <div>4<br>安全才開啟</div>
+    <div>5<br>歸檔到 Drive/Notion</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h3>高風險提醒</h3><p class="muted">看到這些情況，不要直接打開。</p></div>
+  <div class="tiles">
+    <div class="tile"><h4>壓縮檔</h4><p>.zip、.rar、.7z，尤其陌生人寄來或要求輸入密碼。</p></div>
+    <div class="tile"><h4>巨集文件</h4><p>.xlsm、.docm、啟用巨集的 Office 檔案。</p></div>
+    <div class="tile"><h4>可執行檔</h4><p>.exe、.msi、.bat、.cmd、.scr、.apk、.dmg、.pkg。</p></div>
+    <div class="tile"><h4>偽裝檔名</h4><p>例如 發票.pdf.exe、圖片.jpg.scr、檔名有雙副檔名。</p></div>
+    <div class="tile"><h4>短網址</h4><p>bit.ly、tinyurl 等，先檢查再開。</p></div>
+    <div class="tile"><h4>急迫語氣</h4><p>要求立刻付款、登入、下載、開啟附件。</p></div>
+    <div class="tile"><h4>陌生雲端連結</h4><p>不明 Google Drive、Dropbox、OneDrive 共享檔。</p></div>
+    <div class="tile"><h4>來路不明 App</h4><p>手機不要安裝非 App Store / 官方來源的描述檔或 APK。</p></div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>歸檔規則</h3>
+  <ul class="list">
+    <li>未掃描：放「00_待檢查」資料夾。</li>
+    <li>可疑檔案：不要開啟，改放「99_隔離／待刪除」。</li>
+    <li>確認安全：再進入盆景協會、高手揪派、穿搭、旅遊、個人生活、AI 學習等資料夾。</li>
+    <li>含個資或金流資料：不要丟到不明 AI 網站。</li>
+    <li>政府公文、補助資料：只放可信雲端與本機備份。</li>
+  </ul>
+</section>
+
+<p class="footer">目前已排除賽嘉樂園；未來妳需要時再加回。</p>
+</main></div><script src="./app.js"></script></body></html>
