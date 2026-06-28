@@ -1,6 +1,7 @@
 
 const AI_TOOLS = [["ChatGPT", "總指揮／規劃／程式／文案", "https://chatgpt.com"], ["Claude", "長文件／PDF／文字潤飾", "https://claude.ai"], ["Gemini", "Google 生態／文件／試算表", "https://gemini.google.com"], ["Perplexity", "最新資料搜尋／來源查證", "https://www.perplexity.ai"], ["NotebookLM", "知識庫／文件問答", "https://notebooklm.google.com"], ["Canva", "社群圖／海報／簡報", "https://www.canva.com"], ["Gamma", "AI 簡報", "https://gamma.app"], ["Napkin AI", "流程圖／圖解", "https://www.napkin.ai"], ["Figma", "UI 設計／版面", "https://www.figma.com"], ["FigJam", "白板／流程討論", "https://www.figma.com/figjam/"], ["Excalidraw", "手繪感流程圖", "https://excalidraw.com"], ["Ideogram", "文字生圖／海報字", "https://ideogram.ai"], ["Recraft", "品牌視覺／向量風格", "https://www.recraft.ai"], ["Krea", "影像生成與強化", "https://www.krea.ai"], ["Leonardo AI", "生圖／設計素材", "https://leonardo.ai"], ["Adobe Firefly", "商用友善影像生成", "https://firefly.adobe.com"], ["Kling AI", "AI 影片生成", "https://klingai.com"], ["Hailuo AI", "AI 動畫影片", "https://hailuoai.video"], ["Pika", "AI 影片生成", "https://pika.art"], ["Runway", "AI 影片工具", "https://runwayml.com"], ["CapCut", "剪輯／字幕／短影音", "https://www.capcut.com"], ["Suno", "AI 音樂", "https://suno.com"], ["Udio", "AI 音樂", "https://www.udio.com"], ["ElevenLabs", "AI 配音", "https://elevenlabs.io"], ["TTSMaker", "免費文字轉語音", "https://ttsmaker.com"], ["Make", "自動化串接", "https://www.make.com"], ["n8n", "自動化流程", "https://n8n.io"], ["Zapier", "自動化串接", "https://zapier.com"], ["IFTTT", "簡易自動化", "https://ifttt.com"], ["Notion", "資料庫／任務管理", "https://www.notion.so"], ["Google Drive", "檔案倉庫", "https://drive.google.com"], ["Google Sheets", "表格資料庫", "https://docs.google.com/spreadsheets"], ["Google Docs", "文件撰寫", "https://docs.google.com/document"], ["Google Calendar", "行事曆", "https://calendar.google.com"], ["Gmail", "電子郵件", "https://mail.google.com"], ["LINE OA Manager", "LINE 官方帳號後台", "https://manager.line.biz"], ["GitHub", "程式碼與網頁發布", "https://github.com"], ["GitHub Pages 說明文件", "GitHub Pages 說明", "https://docs.github.com/pages"], ["Bolt.new", "AI 程式開發", "https://bolt.new"], ["Lovable", "AI 建站", "https://lovable.dev"], ["Firebase Studio", "AI 應用程式開發", "https://studio.firebase.google.com"], ["Cloudflare", "免費部署／Workers", "https://www.cloudflare.com"], ["Vercel", "前端部署", "https://vercel.com"], ["Netlify", "前端部署", "https://www.netlify.com"], ["Glide", "無程式應用程式", "https://www.glideapps.com"], ["Airtable", "資料庫表格", "https://airtable.com"], ["Tally", "免費表單", "https://tally.so"], ["Jotform", "表單工具", "https://www.jotform.com"], ["Typeform", "表單體驗", "https://www.typeform.com"], ["TinyWow", "PDF 小工具", "https://tinywow.com"], ["ILovePDF", "PDF 工具", "https://www.ilovepdf.com"], ["Remove.bg", "去背工具", "https://www.remove.bg"], ["Photopea", "免費線上修圖", "https://www.photopea.com"], ["Miro", "白板協作", "https://miro.com"], ["Trello", "看板管理", "https://trello.com"]];
 const FEATURES = ["AI 任務判斷", "AI 工具推薦", "AI 收件匣分類", "歸檔位置判斷", "官方工具入口", "專案領域分流", "每日任務提示", "免費工具策略", "GitHub Pages 部署", "手機加入主畫面", "深色介面", "響應式版面", "工作流程卡片", "提示詞庫", "檢查清單", "Google Drive 架構", "Notion 資料庫規劃", "NotebookLM 知識庫規劃", "Make 自動化藍圖", "LINE OA 發布流程", "盆景補助流程", "高手揪派課表流程", "穿搭資料庫", "旅遊規劃流程", "文件整理流程", "PDF 摘要流程", "簡報生成流程", "海報設計流程", "影片生成流程", "配音流程", "音樂流程", "搜尋查證流程", "任務看板", "行事曆規劃", "模板中心", "成效報告", "備份提醒", "隱私提醒", "版本紀錄", "系統路線圖", "功能模組 041", "功能模組 042", "功能模組 043", "功能模組 044", "功能模組 045", "功能模組 046", "功能模組 047", "功能模組 048", "功能模組 049", "功能模組 050", "功能模組 051", "功能模組 052", "功能模組 053", "功能模組 054", "功能模組 055", "功能模組 056", "功能模組 057", "功能模組 058", "功能模組 059", "功能模組 060", "功能模組 061", "功能模組 062", "功能模組 063", "功能模組 064", "功能模組 065", "功能模組 066", "功能模組 067", "功能模組 068", "功能模組 069", "功能模組 070", "功能模組 071", "功能模組 072", "功能模組 073", "功能模組 074", "功能模組 075", "功能模組 076", "功能模組 077", "功能模組 078", "功能模組 079", "功能模組 080", "功能模組 081", "功能模組 082", "功能模組 083", "功能模組 084", "功能模組 085", "功能模組 086", "功能模組 087", "功能模組 088", "功能模組 089", "功能模組 090", "功能模組 091", "功能模組 092", "功能模組 093", "功能模組 094", "功能模組 095", "功能模組 096", "功能模組 097", "功能模組 098", "功能模組 099", "功能模組 100", "功能模組 101", "功能模組 102", "功能模組 103", "功能模組 104", "功能模組 105", "功能模組 106", "功能模組 107", "功能模組 108", "功能模組 109", "功能模組 110", "功能模組 111", "功能模組 112", "功能模組 113", "功能模組 114", "功能模組 115", "功能模組 116", "功能模組 117", "功能模組 118", "功能模組 119", "功能模組 120", "功能模組 121", "功能模組 122", "功能模組 123", "功能模組 124", "功能模組 125", "功能模組 126", "功能模組 127", "功能模組 128", "功能模組 129", "功能模組 130", "功能模組 131", "功能模組 132", "功能模組 133", "功能模組 134", "功能模組 135", "功能模組 136", "功能模組 137", "功能模組 138", "功能模組 139", "功能模組 140", "功能模組 141", "功能模組 142", "功能模組 143", "功能模組 144", "功能模組 145", "功能模組 146", "功能模組 147", "功能模組 148", "功能模組 149", "功能模組 150", "功能模組 151", "功能模組 152", "功能模組 153", "功能模組 154", "功能模組 155", "功能模組 156", "功能模組 157", "功能模組 158", "功能模組 159", "功能模組 160", "功能模組 161", "功能模組 162", "功能模組 163", "功能模組 164", "功能模組 165", "功能模組 166", "功能模組 167", "功能模組 168", "功能模組 169", "功能模組 170", "功能模組 171", "功能模組 172", "功能模組 173", "功能模組 174", "功能模組 175", "功能模組 176", "功能模組 177", "功能模組 178", "功能模組 179", "功能模組 180", "功能模組 181", "功能模組 182", "功能模組 183", "功能模組 184", "功能模組 185", "功能模組 186", "功能模組 187", "功能模組 188", "功能模組 189", "功能模組 190", "功能模組 191", "功能模組 192", "功能模組 193", "功能模組 194", "功能模組 195", "功能模組 196", "功能模組 197", "功能模組 198", "功能模組 199", "功能模組 200"];
+const HISTORY_LINKS_KEY = "juliet_history_links_v1";
 function updateClock(){
  const d=new Date();
  const date=document.querySelector("#dateText"); const time=document.querySelector("#timeText");
@@ -40,7 +41,7 @@ function recommend(text){
  }).filter(rule=>rule.score>0).sort((a,b)=>b.score-a.score);
  const hit=ranked[0] || {name:"一般任務拆解", plan:"ChatGPT", reason:"先拆解任務，再決定是否轉去其他 AI。", score:0, matched:[]};
  const evidence=hit.matched.length ? `<br>判斷依據：${hit.name}（${hit.matched.slice(0,4).join("、")}）` : "";
- return `建議使用：${hit.plan}<br>原因：${hit.reason}${evidence}${toolLinksFor(hit.plan)}`;
+ return `建議使用：${hit.plan}<br>原因：${hit.reason}${evidence}${historyLinksFor(t)}${toolLinksFor(hit.plan)}`;
 }
 const TOOL_LINKS = [
  ["Google Drive","https://drive.google.com"],
@@ -76,6 +77,31 @@ function toolLinksFor(plan){
  links.sort((a,b)=>a.order-b.order);
  return `<div class="tool-links">${links.map(item=>`<a href="${item.url}" target="_blank" rel="noopener">開啟 ${item.name}</a>`).join("")}</div>`;
 }
+function loadHistoryLinks(){
+ try{return JSON.parse(localStorage.getItem(HISTORY_LINKS_KEY) || "{}");}
+ catch{return {};}
+}
+function saveHistoryLinks(links){
+ localStorage.setItem(HISTORY_LINKS_KEY, JSON.stringify(links));
+}
+function safeUrl(url){
+ const value=String(url || "").trim();
+ return /^https?:\/\//.test(value) ? value : "";
+}
+function historyLinksFor(task){
+ const q=encodeURIComponent(task || "");
+ const saved=loadHistoryLinks();
+ const links=[
+  {name:"搜尋 Google Docs", url:`https://docs.google.com/document/u/0/?q=${q}`},
+  {name:"搜尋 Google Drive", url:`https://drive.google.com/drive/search?q=${q}`},
+  {name:"開啟 Notion", url:"https://www.notion.so"}
+ ];
+ const notion=safeUrl(saved.notionUrl);
+ const drive=safeUrl(saved.driveUrl);
+ if(notion) links.unshift({name:"我的 Notion 資料庫", url:notion});
+ if(drive) links.unshift({name:"我的雲端資料夾", url:drive});
+ return `<div class="history-links"><strong>建議先找自己的歷史資料</strong><p>先查看妳在 Notion、Google Docs 或雲端資料夾裡是否已有相關內容，再決定要不要請 AI 整理。</p><div class="tool-links">${links.map(item=>`<a href="${item.url}" target="_blank" rel="noopener">${item.name}</a>`).join("")}</div></div>`;
+}
 function classify(text){
  const t=(text||"").trim(); if(!t) return "請先貼上資料。";
  if(/補助|公文|核銷|研習|盆景/.test(t)) return "建議歸檔：🌳 高樹鄉盆景協會";
@@ -93,6 +119,22 @@ function boot(){
  document.querySelectorAll("[data-task]").forEach(btn=>btn.addEventListener("click",()=>{document.querySelector("#taskInput").value=btn.dataset.task; if(rb) rb.click();}));
  const cb=document.querySelector("#classifyBtn");
  if(cb) cb.addEventListener("click",()=>{const box=document.querySelector("#classifyResult"); box.innerHTML=classify(document.querySelector("#inboxText").value); box.classList.remove("hidden");});
+ bootHistoryLinks();
+}
+function bootHistoryLinks(){
+ const saveBtn=document.querySelector("#saveHistoryLinksBtn");
+ if(!saveBtn) return;
+ const saved=loadHistoryLinks();
+ const notionInput=document.querySelector("#historyNotionUrl");
+ const driveInput=document.querySelector("#historyDriveUrl");
+ notionInput.value=saved.notionUrl || "";
+ driveInput.value=saved.driveUrl || "";
+ saveBtn.addEventListener("click",()=>{
+  saveHistoryLinks({notionUrl:notionInput.value.trim(),driveUrl:driveInput.value.trim()});
+  const box=document.querySelector("#historySaveResult");
+  box.textContent="已儲存。下一次判斷時會顯示妳自己的資料連結。";
+  box.classList.remove("hidden");
+ });
 }
 document.addEventListener("DOMContentLoaded",()=>{
  boot();

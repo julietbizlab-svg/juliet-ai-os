@@ -7,7 +7,15 @@
 <article class="card"><h3>AI 推薦引擎</h3><p class="muted">輸入任務，判斷應使用哪個 AI。</p>
 <div class="inputrow"><input id="taskInput" placeholder="例如：我要幫盆景協會找補助、做高手揪派課表、整理穿搭、做影片..."/><button id="recommendBtn">開始判斷</button></div>
 <div class="chips"><button data-task="我要幫盆景協會找補助">盆景補助</button><button data-task="我要做高手揪派課表">課表</button><button data-task="我要整理穿搭造型">穿搭</button><button data-task="我要做影片">影片</button></div>
-<div id="recommendResult" class="result hidden"></div></article>
+<div id="recommendResult" class="result hidden"></div>
+<div class="history-settings">
+<h4>我的歷史資料連結</h4>
+<p class="muted">貼上妳常用的 Notion 資料庫或 Google Drive 資料夾，之後判斷結果會一起顯示。</p>
+<input id="historyNotionUrl" placeholder="Notion 資料庫連結"/>
+<input id="historyDriveUrl" placeholder="Google Drive 資料夾連結"/>
+<button id="saveHistoryLinksBtn" class="secondary-btn">儲存我的資料連結</button>
+<div id="historySaveResult" class="result hidden"></div>
+</div></article>
 <article class="card"><h3>AI 收件匣</h3><p class="muted">貼上資料，判斷應歸檔到哪裡。</p><textarea id="inboxText" placeholder="貼上資料、網址、筆記、待辦..."></textarea><button id="classifyBtn">判斷歸檔</button><div id="classifyResult" class="result hidden"></div></article>
 </section>
 <section class="section"><div class="stats">
