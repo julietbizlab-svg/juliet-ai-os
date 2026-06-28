@@ -90,3 +90,191 @@ document.addEventListener("DOMContentLoaded",()=>{
    window.open(searchMode(mode,q),"_blank");
  });
 });
+
+const BONSAI_KEY = "juliet_bonsai_records_v1";
+const BONSAI_SCHEMA = {
+  category: "補助 / 活動 / 研習 / 公文 / 核銷 / 會員 / 其他",
+  title: "資料標題",
+  owner: "負責人",
+  dueDate: "期限 YYYY-MM-DD",
+  status: "待處理 / 進行中 / 待補件 / 已完成",
+  amount: "金額",
+  location: "Google Drive / Notion / 紙本資料夾",
+  note: "備註與附件清單",
+  createdAt: "建立時間"
+};
+
+function bonsaiLoad(){
+ try{return JSON.parse(localStorage.getItem(BONSAI_KEY) || "[]");}
+ catch{return [];}
+}
+function bonsaiSave(records){
+ localStorage.setItem(BONSAI_KEY, JSON.stringify(records));
+}
+function bonsaiMoney(n){
+ return Number(n || 0).toLocaleString("zh-TW");
+}
+function bonsaiEscape(text){
+ return String(text || "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+function bonsaiClassifyText(text){
+ const t=(text||"").trim();
+ let category="其他";
+ if(/補助|申請|計畫|經費|審查/.test(t)) category="補助";
+ else if(/活動|展覽|開幕|市集|成果/.test(t)) category="活動";
+ else if(/研習|課程|講師|報名|上課/.test(t)) category="研習";
+ else if(/公文|來函|函文|發文|收文/.test(t)) category="公文";
+ else if(/核銷|收據|發票|憑證|付款/.test(t)) category="核銷";
+ else if(/會員|理監事|名冊|會費/.test(t)) category="會員";
+ let status=/缺|補件|退件/.test(t) ? "待補件" : (/完成|結案|已送出/.test(t) ? "已完成" : "待處理");
+ const next={
+  "補助":"建立申請資料夾，補齊計畫書、經費表與附件清單。",
+  "活動":"確認日期、場地、宣傳圖與報名方式。",
+  "研習":"整理講師、課程表、報名名單與簽到表。",
+  "公文":"登錄收文日期，設定回覆期限與承辦人。",
+  "核銷":"檢查收據、發票、成果照片與支出明細。",
+  "會員":"更新名冊、聯絡方式、會費與出席紀錄。",
+  "其他":"先歸入待分類，再補上負責人與存放位置。"
+ }[category];
+ return {category, status, next};
+}
+function bonsaiFiltered(records){
+ const q=(document.querySelector("#bonsaiSearch")?.value||"").trim().toLowerCase();
+ const cat=document.querySelector("#bonsaiFilterCategory")?.value||"";
+ const status=document.querySelector("#bonsaiFilterStatus")?.value||"";
+ return records.filter(r=>{
+  const hay=[r.category,r.title,r.owner,r.status,r.location,r.note].join(" ").toLowerCase();
+  return (!q || hay.includes(q)) && (!cat || r.category===cat) && (!status || r.status===status);
+ });
+}
+function bonsaiRender(){
+ const records=bonsaiLoad();
+ const rows=bonsaiFiltered(records);
+ const body=document.querySelector("#bonsaiTableBody");
+ const empty=document.querySelector("#bonsaiEmpty");
+ if(!body) return;
+ const now=new Date();
+ const soon=new Date(now.getFullYear(), now.getMonth(), now.getDate()+7);
+ document.querySelector("#bonsaiTotal").textContent=records.length;
+ document.querySelector("#bonsaiOpen").textContent=records.filter(r=>r.status!=="已完成").length;
+ document.querySelector("#bonsaiDue").textContent=records.filter(r=>{
+  if(!r.dueDate || r.status==="已完成") return false;
+  const d=new Date(r.dueDate+"T00:00:00");
+  return d>=new Date(now.getFullYear(), now.getMonth(), now.getDate()) && d<=soon;
+ }).length;
+ document.querySelector("#bonsaiGrantTotal").textContent=bonsaiMoney(records.filter(r=>r.category==="補助").reduce((sum,r)=>sum+Number(r.amount||0),0));
+ empty.classList.toggle("hidden", rows.length>0);
+ body.innerHTML=rows.map(r=>{
+  const cls=r.status==="已完成" ? "status-done" : (r.status==="待補件" ? "status-wait" : "");
+  return `<tr>
+   <td>${bonsaiEscape(r.category)}</td>
+   <td><div class="table-title">${bonsaiEscape(r.title)}</div><div class="table-note">${bonsaiEscape(r.note)}</div></td>
+   <td>${bonsaiEscape(r.owner || "未指定")}</td>
+   <td>${bonsaiEscape(r.dueDate || "未設定")}</td>
+   <td><span class="status-pill ${cls}">${bonsaiEscape(r.status)}</span></td>
+   <td>${bonsaiMoney(r.amount)}</td>
+   <td><button class="secondary-btn" data-bonsai-done="${r.id}">完成</button> <button class="danger-btn" data-bonsai-delete="${r.id}">刪除</button></td>
+  </tr>`;
+ }).join("");
+}
+function bonsaiRecordFromForm(){
+ return {
+  id: String(Date.now()),
+  category: document.querySelector("#bonsaiCategory").value,
+  status: document.querySelector("#bonsaiStatus").value,
+  title: document.querySelector("#bonsaiTitle").value.trim(),
+  owner: document.querySelector("#bonsaiOwner").value.trim(),
+  dueDate: document.querySelector("#bonsaiDueDate").value,
+  amount: document.querySelector("#bonsaiAmount").value,
+  location: document.querySelector("#bonsaiLocation").value.trim(),
+  note: document.querySelector("#bonsaiNote").value.trim(),
+  createdAt: new Date().toISOString()
+ };
+}
+function bonsaiDownload(name, text, type){
+ const blob=new Blob([text],{type});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url; a.download=name; a.click();
+ URL.revokeObjectURL(url);
+}
+function bonsaiExportCsv(){
+ const records=bonsaiLoad();
+ const headers=["類別","標題","負責人","期限","狀態","金額","存放位置","備註","建立時間"];
+ const lines=[headers, ...records.map(r=>[r.category,r.title,r.owner,r.dueDate,r.status,r.amount,r.location,r.note,r.createdAt])];
+ const csv=lines.map(row=>row.map(v=>`"${String(v||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+ bonsaiDownload("bonsai-database.csv", "\ufeff"+csv, "text/csv;charset=utf-8");
+}
+function bonsaiExportJson(){
+ bonsaiDownload("bonsai-database.json", JSON.stringify(bonsaiLoad(), null, 2), "application/json;charset=utf-8");
+}
+function bonsaiCopy(text){
+ if(navigator.clipboard) return navigator.clipboard.writeText(text);
+ const box=document.createElement("textarea");
+ box.value=text; document.body.appendChild(box); box.select(); document.execCommand("copy"); box.remove();
+ return Promise.resolve();
+}
+function bootBonsai(){
+ if(!document.querySelector("#bonsaiForm")) return;
+ const schemaBox=document.querySelector("#bonsaiSchema");
+ schemaBox.textContent=JSON.stringify(BONSAI_SCHEMA, null, 2);
+ document.querySelector("#bonsaiForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const record=bonsaiRecordFromForm();
+  if(!record.title) return;
+  const records=bonsaiLoad();
+  records.unshift(record);
+  bonsaiSave(records);
+  e.target.reset();
+  bonsaiRender();
+ });
+ document.querySelector("#bonsaiDemoBtn").addEventListener("click", ()=>{
+  document.querySelector("#bonsaiCategory").value="補助";
+  document.querySelector("#bonsaiStatus").value="進行中";
+  document.querySelector("#bonsaiTitle").value="年度盆景研習補助申請";
+  document.querySelector("#bonsaiOwner").value="總幹事";
+  document.querySelector("#bonsaiAmount").value="50000";
+  document.querySelector("#bonsaiLocation").value="Google Drive / 盆景協會 / 補助";
+  document.querySelector("#bonsaiNote").value="需準備計畫書、課程表、講師資料、經費表與成果照片。";
+ });
+ document.querySelector("#bonsaiClassifyBtn").addEventListener("click", ()=>{
+  const text=document.querySelector("#bonsaiInbox").value;
+  const res=bonsaiClassifyText(text);
+  const box=document.querySelector("#bonsaiAutomationResult");
+  box.innerHTML=`建議類別：${res.category}<br>建議狀態：${res.status}<br>下一步：${res.next}`;
+  box.classList.remove("hidden");
+ });
+ document.querySelector("#bonsaiCreateFromInboxBtn").addEventListener("click", ()=>{
+  const text=document.querySelector("#bonsaiInbox").value.trim();
+  if(!text) return;
+  const res=bonsaiClassifyText(text);
+  const records=bonsaiLoad();
+  records.unshift({id:String(Date.now()),category:res.category,status:res.status,title:text.slice(0,32),owner:"",dueDate:"",amount:"",location:"待建立",note:`${text}\n下一步：${res.next}`,createdAt:new Date().toISOString()});
+  bonsaiSave(records);
+  document.querySelector("#bonsaiInbox").value="";
+  document.querySelector("#bonsaiAutomationResult").classList.add("hidden");
+  bonsaiRender();
+ });
+ ["#bonsaiSearch","#bonsaiFilterCategory","#bonsaiFilterStatus"].forEach(sel=>{
+  document.querySelector(sel).addEventListener("input", bonsaiRender);
+ });
+ document.querySelector("#bonsaiTableBody").addEventListener("click", e=>{
+  const done=e.target.closest("[data-bonsai-done]");
+  const del=e.target.closest("[data-bonsai-delete]");
+  if(done){
+   const records=bonsaiLoad().map(r=>r.id===done.dataset.bonsaiDone ? {...r,status:"已完成"} : r);
+   bonsaiSave(records); bonsaiRender();
+  }
+  if(del && confirm("確定刪除這筆資料？")){
+   bonsaiSave(bonsaiLoad().filter(r=>r.id!==del.dataset.bonsaiDelete));
+   bonsaiRender();
+  }
+ });
+ document.querySelector("#bonsaiExportCsvBtn").addEventListener("click", bonsaiExportCsv);
+ document.querySelector("#bonsaiExportJsonBtn").addEventListener("click", bonsaiExportJson);
+ document.querySelector("#bonsaiCopySchemaBtn").addEventListener("click", ()=>{
+  bonsaiCopy(JSON.stringify(BONSAI_SCHEMA, null, 2));
+ });
+ bonsaiRender();
+}
+document.addEventListener("DOMContentLoaded", bootBonsai);
