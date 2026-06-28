@@ -24,7 +24,42 @@ function recommend(text){
   [["網站","GitHub","程式","系統"],"ChatGPT → GitHub Pages / Bolt.new","適合免費建構個人 AI OS。"]
  ];
  const hit=rules.find(r=>r[0].some(k=>t.includes(k)));
- return hit ? `建議使用：${hit[1]}<br>原因：${hit[2]}` : "建議使用：ChatGPT<br>原因：先拆解任務，再決定是否轉去其他 AI。";
+ const plan=hit ? hit[1] : "ChatGPT";
+ const reason=hit ? hit[2] : "先拆解任務，再決定是否轉去其他 AI。";
+ return `建議使用：${plan}<br>原因：${reason}${toolLinksFor(plan)}`;
+}
+const TOOL_LINKS = [
+ ["Google Drive","https://drive.google.com"],
+ ["Google Sheets","https://docs.google.com/spreadsheets"],
+ ["Google Docs","https://docs.google.com/document"],
+ ["LINE OA","https://manager.line.biz"],
+ ["GitHub Pages","https://docs.github.com/pages"],
+ ["NotebookLM","https://notebooklm.google.com"],
+ ["Perplexity","https://www.perplexity.ai"],
+ ["ChatGPT","https://chatgpt.com"],
+ ["Claude","https://claude.ai"],
+ ["Gemini","https://gemini.google.com"],
+ ["Canva","https://www.canva.com"],
+ ["Gamma","https://gamma.app"],
+ ["Ideogram","https://ideogram.ai"],
+ ["Recraft","https://www.recraft.ai"],
+ ["Kling","https://klingai.com"],
+ ["Hailuo","https://hailuoai.video"],
+ ["CapCut","https://www.capcut.com"],
+ ["Suno","https://suno.com"],
+ ["Udio","https://www.udio.com"],
+ ["ElevenLabs","https://elevenlabs.io"],
+ ["Make","https://www.make.com"],
+ ["Notion","https://www.notion.so"],
+ ["Bolt.new","https://bolt.new"]
+];
+function toolLinksFor(plan){
+ const links=[];
+ TOOL_LINKS.forEach(([name,url])=>{
+  if(plan.includes(name) && !links.some(item=>item.url===url)) links.push({name,url});
+ });
+ if(!links.length) return "";
+ return `<div class="tool-links">${links.map(item=>`<a href="${item.url}" target="_blank" rel="noopener">開啟 ${item.name}</a>`).join("")}</div>`;
 }
 function classify(text){
  const t=(text||"").trim(); if(!t) return "請先貼上資料。";
