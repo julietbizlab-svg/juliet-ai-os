@@ -1,1 +1,1 @@
-# Keep GitHub Pages from running Jekyll so static files are served as-is.
+# 讓 GitHub Pages 直接發布靜態檔案，不套用 Jekyll 處理。
