@@ -10,6 +10,7 @@ function updateClock(){
 function recommend(text){
  const t=(text||"").trim(); if(!t) return "請先輸入任務。";
  const rules=[
+  [["會議紀錄","會議記錄","會議","紀錄","記錄","範本","模板","表單"],"ChatGPT → Google Docs → Google Drive","先產生可直接套用的文字範本，再存成文件與雲端檔案。"],
   [["盆景","補助","公文","核銷","研習"],"Perplexity → ChatGPT → Claude → Google Drive","先查最新補助，再寫計畫與整理附件。"],
   [["高手","課表","預約","瑜伽","有氧","LINE"],"ChatGPT → Canva → LINE OA","先產生課表與文案，再做圖發布。"],
   [["穿搭","造型","妝","髮型","包包","鞋"],"ChatGPT → Canva → Ideogram / Recraft","先判斷風格，再做視覺資料庫。"],
@@ -21,7 +22,6 @@ function recommend(text){
   [["音樂","歌曲","配樂"],"Suno / Udio","適合生成配樂與活動歌曲。"],
   [["配音","旁白"],"ElevenLabs","適合影片旁白與語音。"],
   [["自動化","歸檔","串接","倉庫"],"Make → Google Drive → Notion","適合免費資料流與自動分類。"],
-  [["會議","會議紀錄","會議記錄","紀錄","記錄"],"ChatGPT → Google Docs → Google Drive","先整理逐字稿與決議，再存成文件與雲端檔案。"],
   [["網站","GitHub","程式","系統"],"ChatGPT → GitHub Pages / Bolt.new","適合免費建構個人 AI OS。"]
  ];
  const hit=rules.find(r=>r[0].some(k=>t.includes(k)));
