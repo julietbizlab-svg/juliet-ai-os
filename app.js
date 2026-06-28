@@ -129,12 +129,27 @@ function bootHistoryLinks(){
  const driveInput=document.querySelector("#historyDriveUrl");
  notionInput.value=saved.notionUrl || "";
  driveInput.value=saved.driveUrl || "";
+ updateHistorySettingsUi(saved);
  saveBtn.addEventListener("click",()=>{
-  saveHistoryLinks({notionUrl:notionInput.value.trim(),driveUrl:driveInput.value.trim()});
+  const links={notionUrl:notionInput.value.trim(),driveUrl:driveInput.value.trim()};
+  saveHistoryLinks(links);
+  updateHistorySettingsUi(links);
   const box=document.querySelector("#historySaveResult");
-  box.textContent="已儲存。下一次判斷時會顯示妳自己的資料連結。";
+  box.textContent="已儲存，下一次判斷會顯示妳自己的資料連結。";
   box.classList.remove("hidden");
  });
+}
+function updateHistorySettingsUi(links){
+ const notion=safeUrl(links.notionUrl);
+ const drive=safeUrl(links.driveUrl);
+ const notionStatus=document.querySelector("#historyNotionStatus");
+ const driveStatus=document.querySelector("#historyDriveStatus");
+ const notionOpen=document.querySelector("#openHistoryNotion");
+ const driveOpen=document.querySelector("#openHistoryDrive");
+ if(notionStatus) notionStatus.textContent=notion ? "已設定" : "尚未設定";
+ if(driveStatus) driveStatus.textContent=drive ? "已設定" : "尚未設定";
+ if(notionOpen) notionOpen.href=notion || "https://www.notion.so";
+ if(driveOpen) driveOpen.href=drive || "https://drive.google.com";
 }
 document.addEventListener("DOMContentLoaded",()=>{
  boot();
