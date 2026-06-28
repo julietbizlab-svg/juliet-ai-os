@@ -278,3 +278,171 @@ function bootBonsai(){
  bonsaiRender();
 }
 document.addEventListener("DOMContentLoaded", bootBonsai);
+
+const GOSU_KEY = "juliet_gosu_records_v1";
+const GOSU_SCHEMA = {
+  category: "課程 / 預約 / 會員 / 收款 / LINE OA / 行銷 / 其他",
+  title: "資料標題",
+  owner: "學員或負責人",
+  date: "日期 YYYY-MM-DD",
+  time: "時間 HH:mm",
+  status: "待處理 / 已確認 / 待付款 / 已完成",
+  amount: "金額",
+  source: "LINE OA / IG / 現場 / 轉介紹",
+  note: "備註與下一步",
+  createdAt: "建立時間"
+};
+
+function gosuLoad(){
+ try{return JSON.parse(localStorage.getItem(GOSU_KEY) || "[]");}
+ catch{return [];}
+}
+function gosuSave(records){
+ localStorage.setItem(GOSU_KEY, JSON.stringify(records));
+}
+function gosuClassifyText(text){
+ const t=(text||"").trim();
+ let category="其他";
+ if(/課|瑜伽|有氧|教練|團課|私教|體驗/.test(t)) category="課程";
+ if(/預約|報名|想約|時間|幾點/.test(t)) category="預約";
+ if(/會員|續約|月卡|堂卡|資料|生日/.test(t)) category="會員";
+ if(/付款|匯款|現金|刷卡|收款|欠款|費用/.test(t)) category="收款";
+ if(/LINE|官方帳號|廣播|訊息|客服/.test(t)) category="LINE OA";
+ if(/IG|貼文|限動|活動|文案|招生|宣傳/.test(t)) category="行銷";
+ let status=/付款|欠款|未付|待匯/.test(t) ? "待付款" : (/確認|已約|已報名|完成/.test(t) ? "已確認" : "待處理");
+ const next={
+  "課程":"確認課程名稱、教練、日期時間與可報名名額。",
+  "預約":"回覆可預約時段，確認姓名、電話與是否已付款。",
+  "會員":"更新會員資料、方案、到期日與聯絡方式。",
+  "收款":"核對金額與付款方式，完成後標記為已完成。",
+  "LINE OA":"整理成可發送訊息，安排廣播或一對一回覆。",
+  "行銷":"整理成貼文主題、CTA、圖片需求與發布日期。",
+  "其他":"先放入待處理，再補上類別與負責人。"
+ }[category];
+ return {category, status, next};
+}
+function gosuFiltered(records){
+ const q=(document.querySelector("#gosuSearch")?.value||"").trim().toLowerCase();
+ const cat=document.querySelector("#gosuFilterCategory")?.value||"";
+ const status=document.querySelector("#gosuFilterStatus")?.value||"";
+ return records.filter(r=>{
+  const hay=[r.category,r.title,r.owner,r.status,r.source,r.note].join(" ").toLowerCase();
+  return (!q || hay.includes(q)) && (!cat || r.category===cat) && (!status || r.status===status);
+ });
+}
+function gosuRender(){
+ const records=gosuLoad();
+ const rows=gosuFiltered(records);
+ const body=document.querySelector("#gosuTableBody");
+ const empty=document.querySelector("#gosuEmpty");
+ if(!body) return;
+ const now=new Date();
+ const thisMonth=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+ document.querySelector("#gosuTotal").textContent=records.length;
+ document.querySelector("#gosuBookings").textContent=records.filter(r=>r.category==="預約" && r.status!=="已完成").length;
+ document.querySelector("#gosuMembers").textContent=records.filter(r=>r.category==="會員").length;
+ document.querySelector("#gosuRevenue").textContent=bonsaiMoney(records.filter(r=>r.category==="收款" && r.date && r.date.startsWith(thisMonth)).reduce((sum,r)=>sum+Number(r.amount||0),0));
+ empty.classList.toggle("hidden", rows.length>0);
+ body.innerHTML=rows.map(r=>{
+  const cls=r.status==="已完成" || r.status==="已確認" ? "status-done" : (r.status==="待付款" ? "status-wait" : "");
+  const dateTime=[r.date || "未設定", r.time || ""].join(" ").trim();
+  return `<tr>
+   <td>${bonsaiEscape(r.category)}</td>
+   <td><div class="table-title">${bonsaiEscape(r.title)}</div><div class="table-note">${bonsaiEscape(r.note)}</div></td>
+   <td>${bonsaiEscape(r.owner || "未指定")}<div class="table-note">${bonsaiEscape(r.source || "")}</div></td>
+   <td>${bonsaiEscape(dateTime)}</td>
+   <td><span class="status-pill ${cls}">${bonsaiEscape(r.status)}</span></td>
+   <td>${bonsaiMoney(r.amount)}</td>
+   <td><button class="secondary-btn" data-gosu-done="${r.id}">完成</button> <button class="danger-btn" data-gosu-delete="${r.id}">刪除</button></td>
+  </tr>`;
+ }).join("");
+}
+function gosuRecordFromForm(){
+ return {
+  id: String(Date.now()),
+  category: document.querySelector("#gosuCategory").value,
+  status: document.querySelector("#gosuStatus").value,
+  title: document.querySelector("#gosuTitle").value.trim(),
+  owner: document.querySelector("#gosuOwner").value.trim(),
+  date: document.querySelector("#gosuDate").value,
+  time: document.querySelector("#gosuTime").value,
+  amount: document.querySelector("#gosuAmount").value,
+  source: document.querySelector("#gosuSource").value.trim(),
+  note: document.querySelector("#gosuNote").value.trim(),
+  createdAt: new Date().toISOString()
+ };
+}
+function gosuExportCsv(){
+ const records=gosuLoad();
+ const headers=["類別","標題","學員或負責人","日期","時間","狀態","金額","來源","備註","建立時間"];
+ const lines=[headers, ...records.map(r=>[r.category,r.title,r.owner,r.date,r.time,r.status,r.amount,r.source,r.note,r.createdAt])];
+ const csv=lines.map(row=>row.map(v=>`"${String(v||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+ bonsaiDownload("gosu-database.csv", "\ufeff"+csv, "text/csv;charset=utf-8");
+}
+function gosuExportJson(){
+ bonsaiDownload("gosu-database.json", JSON.stringify(gosuLoad(), null, 2), "application/json;charset=utf-8");
+}
+function bootGosu(){
+ if(!document.querySelector("#gosuForm")) return;
+ document.querySelector("#gosuSchema").textContent=JSON.stringify(GOSU_SCHEMA, null, 2);
+ document.querySelector("#gosuForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const record=gosuRecordFromForm();
+  if(!record.title) return;
+  const records=gosuLoad();
+  records.unshift(record);
+  gosuSave(records);
+  e.target.reset();
+  gosuRender();
+ });
+ document.querySelector("#gosuDemoBtn").addEventListener("click", ()=>{
+  document.querySelector("#gosuCategory").value="預約";
+  document.querySelector("#gosuStatus").value="待付款";
+  document.querySelector("#gosuTitle").value="小美週三瑜伽體驗課";
+  document.querySelector("#gosuOwner").value="小美";
+  document.querySelector("#gosuTime").value="19:30";
+  document.querySelector("#gosuAmount").value="300";
+  document.querySelector("#gosuSource").value="IG";
+  document.querySelector("#gosuNote").value="從 IG 詢問體驗課，需回覆付款方式與上課注意事項。";
+ });
+ document.querySelector("#gosuClassifyBtn").addEventListener("click", ()=>{
+  const text=document.querySelector("#gosuInbox").value;
+  const res=gosuClassifyText(text);
+  const box=document.querySelector("#gosuAutomationResult");
+  box.innerHTML=`建議類別：${res.category}<br>建議狀態：${res.status}<br>下一步：${res.next}`;
+  box.classList.remove("hidden");
+ });
+ document.querySelector("#gosuCreateFromInboxBtn").addEventListener("click", ()=>{
+  const text=document.querySelector("#gosuInbox").value.trim();
+  if(!text) return;
+  const res=gosuClassifyText(text);
+  const records=gosuLoad();
+  records.unshift({id:String(Date.now()),category:res.category,status:res.status,title:text.slice(0,32),owner:"",date:"",time:"",amount:"",source:"待確認",note:`${text}\n下一步：${res.next}`,createdAt:new Date().toISOString()});
+  gosuSave(records);
+  document.querySelector("#gosuInbox").value="";
+  document.querySelector("#gosuAutomationResult").classList.add("hidden");
+  gosuRender();
+ });
+ ["#gosuSearch","#gosuFilterCategory","#gosuFilterStatus"].forEach(sel=>{
+  document.querySelector(sel).addEventListener("input", gosuRender);
+ });
+ document.querySelector("#gosuTableBody").addEventListener("click", e=>{
+  const done=e.target.closest("[data-gosu-done]");
+  const del=e.target.closest("[data-gosu-delete]");
+  if(done){
+   gosuSave(gosuLoad().map(r=>r.id===done.dataset.gosuDone ? {...r,status:"已完成"} : r));
+   gosuRender();
+  }
+  if(del && confirm("確定刪除這筆資料？")){
+   gosuSave(gosuLoad().filter(r=>r.id!==del.dataset.gosuDelete));
+   gosuRender();
+  }
+ });
+ document.querySelector("#gosuExportCsvBtn").addEventListener("click", gosuExportCsv);
+ document.querySelector("#gosuExportJsonBtn").addEventListener("click", gosuExportJson);
+ document.querySelector("#gosuCopySchemaBtn").addEventListener("click", ()=>{
+  bonsaiCopy(JSON.stringify(GOSU_SCHEMA, null, 2));
+ });
+ gosuRender();
+}
+document.addEventListener("DOMContentLoaded", bootGosu);
