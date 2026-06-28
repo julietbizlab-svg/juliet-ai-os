@@ -7,29 +7,40 @@ function updateClock(){
  if(date) date.textContent=d.toLocaleDateString("zh-TW",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
  if(time) time.textContent=d.toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit"});
 }
+const RECOMMEND_RULES = [
+ {name:"找舊資料", plan:"Google Docs → Notion → Google Drive → NotebookLM → ChatGPT", reason:"先從妳常用的 Docs、Notion 與雲端資料找舊紀錄，再交給 ChatGPT 整理成可用文件。", terms:[["之前的資料",120],["之前資料",110],["過去資料",105],["舊資料",105],["歷史資料",100],["歷史紀錄",95],["調閱",90],["查找",85],["找資料",85],["找之前",85],["之前",45],["過去",40],["舊",35],["資料",18]]},
+ {name:"產生範本", plan:"ChatGPT → Google Docs → Google Drive", reason:"先產生可直接套用的文字範本，再存成文件與雲端檔案。", terms:[["會議紀錄範本",130],["會議記錄範本",130],["會議範本",115],["會議模板",115],["紀錄範本",105],["記錄範本",105],["範本",85],["模板",85],["表單",45],["會議",20]]},
+ {name:"整理會議文件", plan:"Google Docs → ChatGPT → Google Drive", reason:"先建立或整理會議文件，再用 ChatGPT 協助摘要決議與待辦。", terms:[["會議紀錄",95],["會議記錄",95],["理監事會議",90],["會議",45],["紀錄",35],["記錄",35],["決議",30],["待辦",25]]},
+ {name:"查最新補助與公文", plan:"Perplexity → ChatGPT → Claude → Google Drive", reason:"先查最新補助或公文規定，再寫計畫、整理附件與保存檔案。", terms:[["補助",100],["公文",70],["核銷",65],["研習",55],["申請",45],["最新",35],["公告",35],["附件",25],["盆景",18]]},
+ {name:"高手揪派營運", plan:"ChatGPT → Canva → LINE OA", reason:"先產生課表、預約回覆或行銷文案，再做圖並發布到 LINE OA。", terms:[["高手",80],["揪派",80],["課表",75],["預約",70],["瑜伽",60],["有氧",60],["會員",45],["LINE",45],["行銷",35]]},
+ {name:"穿搭形象", plan:"ChatGPT → Canva → Ideogram / Recraft", reason:"先判斷風格與搭配方向，再做視覺資料庫或形象素材。", terms:[["穿搭",90],["造型",75],["妝",55],["髮型",55],["包包",40],["鞋",35],["形象",35]]},
+ {name:"旅遊規劃", plan:"Perplexity → ChatGPT → NotebookLM", reason:"先查最新資訊，再整理成專屬行程與資料庫。", terms:[["旅遊",90],["行程",75],["景點",65],["住宿",60],["交通",55],["機票",45]]},
+ {name:"長文件整理", plan:"Claude → ChatGPT → Google Docs", reason:"長文、PDF、合約與報告先用 Claude 摘要，再用 ChatGPT 改成可用文件。", terms:[["PDF",90],["長文",80],["合約",75],["報告",65],["摘要",55],["文件",40]]},
+ {name:"設計與海報", plan:"Canva → Recraft → Ideogram", reason:"視覺成品優先用設計工具處理，適合海報、社群圖與品牌素材。", terms:[["海報",90],["社群圖",80],["設計",65],["圖片",45],["品牌",35]]},
+ {name:"簡報提案", plan:"Gamma → Canva → ChatGPT", reason:"先產生簡報架構，再美化版面與補文案。", terms:[["簡報",90],["投影片",85],["提案",65],["簡報檔",65]]},
+ {name:"影片製作", plan:"Kling → Hailuo → CapCut", reason:"先生成影片畫面，再剪輯、加字幕與整理發布版本。", terms:[["影片",95],["短影音",90],["動畫",70],["字幕",45],["剪輯",45]]},
+ {name:"音樂配樂", plan:"Suno → Udio", reason:"適合生成活動歌曲、背景音樂與短影音配樂。", terms:[["音樂",90],["歌曲",75],["配樂",75],["主題曲",60]]},
+ {name:"配音旁白", plan:"ElevenLabs → TTSMaker", reason:"適合影片旁白、活動語音與文字轉語音。", terms:[["配音",90],["旁白",85],["語音",65],["文字轉語音",80]]},
+ {name:"自動化歸檔", plan:"Make → Google Drive → Notion", reason:"適合把資料自動分類、寫入表格或同步到資料庫。", terms:[["自動化",90],["歸檔",80],["串接",75],["倉庫",50],["webhook",55],["資料庫",45]]},
+ {name:"網站部署", plan:"ChatGPT → GitHub Pages → Bolt.new", reason:"適合免費建構、修改與部署網站。", terms:[["網站",90],["GitHub",80],["部署",70],["程式",55],["系統",35]]}
+];
 function recommend(text){
  const t=(text||"").trim(); if(!t) return "請先輸入任務。";
- const rules=[
-  [["之前的資料","之前資料","過去資料","舊資料","歷史資料","歷史紀錄","調閱","查找","找資料","找之前"],"Google Docs → Notion → Google Drive → NotebookLM → ChatGPT","先從妳常用的 Docs、Notion 與雲端資料找舊紀錄，再交給 ChatGPT 整理成可用文件。"],
-  [["會議紀錄範本","會議記錄範本","會議範本","會議模板","紀錄範本","記錄範本","表單"],"ChatGPT → Google Docs → Google Drive","先產生可直接套用的文字範本，再存成文件與雲端檔案。"],
-  [["會議紀錄","會議記錄","會議","紀錄","記錄"],"Google Docs → ChatGPT → Google Drive","先建立或整理會議文件，再用 ChatGPT 協助摘要決議與待辦。"],
-  [["盆景","補助","公文","核銷","研習"],"Perplexity → ChatGPT → Claude → Google Drive","先查最新補助，再寫計畫與整理附件。"],
-  [["高手","課表","預約","瑜伽","有氧","LINE"],"ChatGPT → Canva → LINE OA","先產生課表與文案，再做圖發布。"],
-  [["穿搭","造型","妝","髮型","包包","鞋"],"ChatGPT → Canva → Ideogram / Recraft","先判斷風格，再做視覺資料庫。"],
-  [["旅遊","行程","景點","住宿","交通"],"Perplexity → ChatGPT → NotebookLM","先查最新資訊，再排專屬行程。"],
-  [["PDF","長文","文件","合約","報告"],"Claude","最適合長文件整理與摘要。"],
-  [["海報","社群圖","設計"],"Canva / Recraft / Ideogram","適合快速做視覺成品。"],
-  [["簡報","投影片","提案"],"Gamma → Canva","先做架構，再美化版面。"],
-  [["影片","短影音","動畫"],"Kling / Hailuo → CapCut","先生成畫面，再剪輯字幕。"],
-  [["音樂","歌曲","配樂"],"Suno / Udio","適合生成配樂與活動歌曲。"],
-  [["配音","旁白"],"ElevenLabs","適合影片旁白與語音。"],
-  [["自動化","歸檔","串接","倉庫"],"Make → Google Drive → Notion","適合免費資料流與自動分類。"],
-  [["網站","GitHub","程式","系統"],"ChatGPT → GitHub Pages / Bolt.new","適合免費建構個人 AI OS。"]
- ];
- const hit=rules.find(r=>r[0].some(k=>t.includes(k)));
- const plan=hit ? hit[1] : "ChatGPT";
- const reason=hit ? hit[2] : "先拆解任務，再決定是否轉去其他 AI。";
- return `建議使用：${plan}<br>原因：${reason}${toolLinksFor(plan)}`;
+ const normalized=t.toLowerCase();
+ const ranked=RECOMMEND_RULES.map(rule=>{
+  const matched=[];
+  const score=rule.terms.reduce((sum,[term,weight])=>{
+   if(normalized.includes(String(term).toLowerCase())){
+    matched.push(term);
+    return sum+weight;
+   }
+   return sum;
+  },0);
+  return {...rule,score,matched};
+ }).filter(rule=>rule.score>0).sort((a,b)=>b.score-a.score);
+ const hit=ranked[0] || {name:"一般任務拆解", plan:"ChatGPT", reason:"先拆解任務，再決定是否轉去其他 AI。", score:0, matched:[]};
+ const evidence=hit.matched.length ? `<br>判斷依據：${hit.name}（${hit.matched.slice(0,4).join("、")}）` : "";
+ return `建議使用：${hit.plan}<br>原因：${hit.reason}${evidence}${toolLinksFor(hit.plan)}`;
 }
 const TOOL_LINKS = [
  ["Google Drive","https://drive.google.com"],
