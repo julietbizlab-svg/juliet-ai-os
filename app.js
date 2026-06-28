@@ -21,6 +21,7 @@ function recommend(text){
   [["音樂","歌曲","配樂"],"Suno / Udio","適合生成配樂與活動歌曲。"],
   [["配音","旁白"],"ElevenLabs","適合影片旁白與語音。"],
   [["自動化","歸檔","串接","倉庫"],"Make → Google Drive → Notion","適合免費資料流與自動分類。"],
+  [["會議","會議紀錄","會議記錄","紀錄","記錄"],"ChatGPT → Google Docs → Google Drive","先整理逐字稿與決議，再存成文件與雲端檔案。"],
   [["網站","GitHub","程式","系統"],"ChatGPT → GitHub Pages / Bolt.new","適合免費建構個人 AI OS。"]
  ];
  const hit=rules.find(r=>r[0].some(k=>t.includes(k)));
@@ -56,9 +57,10 @@ const TOOL_LINKS = [
 function toolLinksFor(plan){
  const links=[];
  TOOL_LINKS.forEach(([name,url])=>{
-  if(plan.includes(name) && !links.some(item=>item.url===url)) links.push({name,url});
+  if(plan.includes(name) && !links.some(item=>item.url===url)) links.push({name,url,order:plan.indexOf(name)});
  });
  if(!links.length) return "";
+ links.sort((a,b)=>a.order-b.order);
  return `<div class="tool-links">${links.map(item=>`<a href="${item.url}" target="_blank" rel="noopener">開啟 ${item.name}</a>`).join("")}</div>`;
 }
 function classify(text){
@@ -74,10 +76,14 @@ function classify(text){
 function boot(){
  updateClock(); setInterval(updateClock,1000);
  const rb=document.querySelector("#recommendBtn");
- if(rb) rb.addEventListener("click",()=>{const box=document.querySelector("#recommendResult"); box.innerHTML=recommend(document.querySelector("#taskInput").value); box.classList.remove("hidden");});
+ if(rb) rb.addEventListener("click",()=>{const box=document.querySelector("#recommendResult"); box.innerHTML=recommend(document.querySelector("#taskInput").value); box.classList.remove("hidden"); openFirstRecommendedTool(box);});
  document.querySelectorAll("[data-task]").forEach(btn=>btn.addEventListener("click",()=>{document.querySelector("#taskInput").value=btn.dataset.task; if(rb) rb.click();}));
  const cb=document.querySelector("#classifyBtn");
  if(cb) cb.addEventListener("click",()=>{const box=document.querySelector("#classifyResult"); box.innerHTML=classify(document.querySelector("#inboxText").value); box.classList.remove("hidden");});
+}
+function openFirstRecommendedTool(box){
+ const link=box.querySelector(".tool-links a");
+ if(link) window.open(link.href,"_blank","noopener");
 }
 document.addEventListener("DOMContentLoaded",()=>{
  boot();
