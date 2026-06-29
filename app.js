@@ -489,9 +489,33 @@ function gosuExportCsv(){
 function gosuExportJson(){
  bonsaiDownload("gosu-database.json", JSON.stringify(gosuLoad(), null, 2), "application/json;charset=utf-8");
 }
+function gosuSelectCourse(btn){
+ const course=btn.dataset.bookCourse || "";
+ const date=btn.dataset.bookDate || "";
+ const time=btn.dataset.bookTime || "";
+ document.querySelectorAll("[data-book-course]").forEach(item=>item.classList.remove("selected"));
+ btn.classList.add("selected");
+ document.querySelector("#gosuCategory").value="預約";
+ document.querySelector("#gosuStatus").value="待處理";
+ document.querySelector("#gosuTitle").value=`預約｜${course}`;
+ document.querySelector("#gosuDate").value=date;
+ document.querySelector("#gosuTime").value=time;
+ document.querySelector("#gosuSource").value="網站課表";
+ document.querySelector("#gosuNote").value=`客人從七月課程表點選預約：${course}，${date} ${time}。`;
+ const notice=document.querySelector("#courseBookingNotice");
+ if(notice){
+  notice.textContent=`已選擇 ${date} ${time}｜${course}，請在下方填入學員姓名後儲存預約。`;
+  notice.classList.remove("hidden");
+ }
+ document.querySelector("#gosuOwner").focus();
+ document.querySelector("#gosuForm").scrollIntoView({behavior:"smooth", block:"center"});
+}
 function bootGosu(){
  if(!document.querySelector("#gosuForm")) return;
  document.querySelector("#gosuSchema").textContent=JSON.stringify(GOSU_SCHEMA, null, 2);
+ document.querySelectorAll("[data-book-course]").forEach(btn=>{
+  btn.addEventListener("click", ()=>gosuSelectCourse(btn));
+ });
  document.querySelector("#gosuForm").addEventListener("submit", e=>{
   e.preventDefault();
   const record=gosuRecordFromForm();
